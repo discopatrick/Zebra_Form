@@ -1130,7 +1130,7 @@ class Zebra_Form_Control extends XSS_Clean
      *      the value of any of the controls listed in the "dependencies" rule changes - useful for showing/hiding controls
      *      that depend on the values of other controls.
      *
-     *  An element's other existing rules will be checked only if this rule is passed.
+     *  An element's "required" rule (if exists) will be checked <b>only</b> if this rule is passed.
      *
      *  Conditions can be applied to an infinite depth and will be checked accordingly - so, a control may depend on
      *  another control which, in turn, may depend on another control and so on, and all this will be automatically taken
