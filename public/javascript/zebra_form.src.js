@@ -1861,14 +1861,6 @@
 
                             break;
 
-                        // if 'dependencies'
-                        case 'dependencies':
-
-                            // if not all conditions are met, don't validate the control
-                            if (!_validate_dependencies(id)) return true;
-
-                            break;
-
                         case 'custom':
 
                             var break_inner_loop = false;
@@ -2575,6 +2567,9 @@
                             break;
 
                         case 'required':
+
+                            // if element has dependencies, but not all conditions are met, don't make the field mandatory
+                            if (undefined !== control_validation_rules['rules']['dependencies'] && !_validate_dependencies(id)) break;
 
                             // if element type is one of the following
                             switch (attributes['type']) {
