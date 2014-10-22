@@ -196,6 +196,7 @@ class Zebra_Form
             'other_suffix'              =>  '_other',
             'secret_key'                =>  '',
             'show_all_error_messages'   =>  false,
+            'theme'                     =>  'default',
 
         );
 
@@ -1763,7 +1764,7 @@ class Zebra_Form
                 }
 
                 // switch the array entry with it's rendered form
-                $this->errors[$error_block] = '<div class="error"><div class="container">' . $content . '<div class="close"><a href="javascript:void(0)">close</a></div></div></div>';
+                $this->errors[$error_block] = $this->_get_template_block('themes/' . $this->form_properties['theme'] . '/error.php', array('message' => $content));
 
             }
 
@@ -1922,34 +1923,20 @@ class Zebra_Form
 
             }
 
-            // if auto-generated output needs to be horizontal
-            if ($template == '*horizontal') {
+            $variables = array('blocks' => array());
 
-                // the output will be enclosed in a table
-                $contents = '<table>';
+            // if there are errors to be displayed
+            if ($error_messages != '')
 
-                // if there are errors to be displayed
-                if ($error_messages != '')
+                // show the error messages
+                $variables['error_messages'] = $error_messages;
 
-                    // show the error messages
-                    $contents .= '<tr><td colspan="2">' . $error_messages . '</td></tr>';
+            // iterate through blocks
+            foreach ($blocks as $controls) {
 
-                // keep track of odd/even rows
-                $counter = 0;
+                $block = array();
 
-                // total number of rows to be displayed
-                $rows = count($blocks);
-
-                // iterate through blocks
-                foreach ($blocks as $controls) {
-
-                    ++$counter;
-
-                    // each block is in its own row
-                    $contents .= '<tr class="row' . ($counter % 2 == 0 ? ' even' : '') . ($counter == $rows ? ' last' : '') . '">';
-
-                    // the first cell will hold the label (if any)
-                    $contents .= '<td>';
+                if ($template == '*horizontal') {
 
                     // as of PHP 5.3, array_shift required the argument to be a variable and not the result
                     // of a function so we need this intermediary step
@@ -1965,120 +1952,58 @@ class Zebra_Form
                         array_shift($controls);
 
                         // render it
-                        $contents .= $this->controls[$label]->toHTML();
+                        $block['label'] = $this->controls[$label]->toHTML();
 
                     }
-
-                    // close the table cell
-                    $contents .= '</td>';
-
-                    // the second cell contains the actual controls
-                    $contents .= '<td>';
-
-                    // iterate through the controls to be rendered
-                    foreach ($controls as $control) {
-
-                        // if array of controls
-                        // (radio buttons/checkboxes and their labels)
-                        if (is_array($control)) {
-
-                            // iterate through the array's items
-                            foreach ($control as $ctrl)
-
-                                // and display them on the same line
-                                $contents .= '<div class="cell">' . $this->controls[$ctrl]->toHTML() . '</div>';
-
-                            // clear floats
-                            $contents .= '<div class="clear"></div>';
-
-                        // if not an array of controls
-                        } else
-
-                            // if control is required but has the label as a tip inside the control
-                            // we need to manually add the asterisk after the control
-                            if (array_key_exists('required', $this->controls[$control]->rules) && preg_match('/\binside\b/', $this->controls[$control]->attributes['class'])) {
-
-                                // first, make sure the control is inline so that the asterisk will be placed to the right of the control
-                                $this->controls[$control]->set_attributes(array('class' => 'inline'), false);
-
-                                // add the required symbol after the control
-                                $contents .= $this->controls[$control]->toHTML() . '<span class="required">*</span>';
-
-                            // else, render the control
-                            } else $contents .= $this->controls[$control]->toHTML();
-
-                    }
-
-                    // close the cell
-                    $contents .= '</td>';
-
-                    // add a "separator" row
-                    $contents .= '</tr>';
 
                 }
 
-                // finish rendering the table
-                $contents .= '</table>';
+                // iterate through the controls to be rendered
+                foreach ($controls as $control) {
 
-            // if auto-generated output needs to be vertical
-            } else {
+                    // if array of controls
+                    // (radio buttons/checkboxes and their labels)
+                    if (is_array($control)) {
 
-                $contents = '';
+                        $tmp = array();
 
-                // if there are errors to be displayed, show the error messages
-                if ($error_messages != '') $contents .= $error_messages;
+                        // iterate through the array's items
+                        foreach ($control as $ctrl)
 
-                $counter = 0;
+                            // and display them on the same line
+                            $tmp[] = $this->controls[$ctrl]->toHTML();
 
-                // total number of rows to be displayed
-                $rows = count($blocks);
+                        $block[] = $tmp;
 
-                // iterate through blocks
-                foreach ($blocks as $controls) {
+                    // if not an array of controls
+                    } else
 
-                    // ...then block is contained in its own row
-                    $contents .= '<div class="row' . (++$counter % 2 == 0 ? ' even' : '') . ($counter == $rows ? ' last' : '') . '">';
+                        // if control is required but has the label as a tip inside the control
+                        // we need to manually add the asterisk after the control
+                        if (array_key_exists('required', $this->controls[$control]->rules) && preg_match('/\binside\b/', $this->controls[$control]->attributes['class'])) {
 
-                    // iterate through the controls to be rendered
-                    foreach ($controls as $control) {
+                            // first, make sure the control is inline so that the asterisk will be placed to the right of the control
+                            $this->controls[$control]->set_attributes(array('class' => 'inline'), false);
 
-                        // if array of controls
-                        // (radio buttons/checkboxes and their labels)
-                        if (is_array($control)) {
+                            // add the required symbol after the control
+                            $block[] = $this->controls[$control]->toHTML() . '<span class="required">*</span>';
 
-                            // iterate through the array's items
-                            foreach ($control as $ctrl)
-
-                                // and display them on the same line
-                                $contents .= '<div class="cell">' . $this->controls[$ctrl]->toHTML() . '</div>';
-
-                            // clear floats
-                            $contents .= '<div class="clear"></div>';
-
-                        // if not an array of controls
-                        } else
-
-                            // if control is required but has the label as a tip inside the control
-                            // we need to manually add the asterisk after the control
-                            if (array_key_exists('required', $this->controls[$control]->rules) && preg_match('/\binside\b/', $this->controls[$control]->attributes['class'])) {
-
-                                // first, make sure the control is inline so that the asterisk will be placed to the right of the control
-                                $this->controls[$control]->set_attributes(array('class' => 'inline'), false);
-
-                                // add the required symbol after the control
-                                $contents .= $this->controls[$control]->toHTML() . '<span class="required">*</span>';
-
-                            // else, render the control
-                            } else $contents .= $this->controls[$control]->toHTML();
-
-                    }
-
-                    // ...finish rendering
-                    $contents .= '</div>';
+                        // else, render the control
+                        } else $block[] = $this->controls[$control]->toHTML();
 
                 }
+
+                $variables['blocks'][] = $block;
+
+                unset($block);
 
             }
+
+//             print_r('<pre>');
+//             print_r($variables['blocks']);
+//             die();
+
+            $contents = $this->_get_template_block('themes/' . $this->form_properties['theme'] . '/' . ($template == '*horizontal' ? 'horizontal' : 'vertical') . '.php', $variables);
 
         // if a function with the name given as $template, and the function exists
         } elseif (function_exists($template)) {
@@ -4326,6 +4251,26 @@ class Zebra_Form
 
         // return found values
         return $result;
+
+    }
+
+    private function _get_template_block($template, $variables) {
+
+        // starts output caching
+        ob_start();
+
+        extract($variables);
+
+        // if template file exists then includes and evaluates the template file
+    	include $template;
+
+        // put the cached content into a variable
+        $contents = ob_get_contents();
+
+        // purge cache content
+        ob_end_clean();
+
+        return $contents;
 
     }
 

@@ -55,7 +55,9 @@ function dump()
         <link rel="stylesheet" href="libraries/highlight/public/css/ir_black.css" type="text/css">
         <link rel="stylesheet" href="public/css/reset.css" type="text/css">
         <link rel="stylesheet" href="public/css/style.css" type="text/css">
+        <link rel="stylesheet" href="../../../javascripts/Zebra_Datepicker/public/css/default.css" type="text/css">
         <link rel="stylesheet" href="../public/css/zebra_form.css" type="text/css">
+        <link rel="stylesheet" href="../public/css/zebra_form_core.css" type="text/css">
 
     </head>
 
@@ -299,10 +301,10 @@ function dump()
         </table>
 
         <div class="clear"></div>
-
         <script type="text/javascript" src="libraries/highlight/public/javascript/highlight.js"></script>
         <script type="text/javascript" src="public/javascript/jquery-1.11.1.js"></script>
-        <script type="text/javascript" src="../public/javascript/zebra_form.js"></script>
+        <script src="../../../javascripts/Zebra_Datepicker/public/javascript/zebra_datepicker.js"></script>
+        <script type="text/javascript" src="../public/javascript/zebra_form.src.js"></script>
         <script type="text/javascript" src="public/javascript/core.js"></script>
 
     </body>
