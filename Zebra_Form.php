@@ -27,7 +27,7 @@ define('ZEBRA_FORM_UPLOAD_RANDOM_NAMES', false);
  *  For more resources visit {@link http://stefangabos.ro/}
  *
  *  @author     Stefan Gabos <contact@stefangabos.ro>
- *  @version    2.9.5 (last revision: October 31, 2014)
+ *  @version    2.9.5 (last revision: November 06, 2014)
  *  @copyright  (c) 2006 - 2014 Stefan Gabos
  *  @license    http://www.gnu.org/licenses/lgpl-3.0.txt GNU LESSER GENERAL PUBLIC LICENSE
  *  @package    Zebra_Form
@@ -3024,14 +3024,6 @@ class Zebra_Form
 
                             break;
 
-                        // if 'dependencies'
-                        case 'dependencies':
-
-                            // if not all conditions are met, don't validate the control
-                            if (!$this->_validate_dependencies($attribute['id'])) return true;
-
-                            break;
-
                         // if 'convert'
                         case 'convert':
 
@@ -3705,6 +3697,9 @@ class Zebra_Form
 
                         // if "required"
                         case 'required':
+
+                            // if not all conditions are met, ignore this rule
+                            if (!$this->_validate_dependencies($attribute['id'])) break;
 
                             // if it's a drop-down that is part of a time control
                             if ($attribute['type'] == 'time') {
