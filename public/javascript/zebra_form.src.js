@@ -1580,7 +1580,7 @@
 
                         // the main container holding the error message
                         container = jQuery('<div/>', {
-                            'class':    'Zebra_Form_error_message',
+                            'class':    'Zebra_Form_error_message alert alert-warning',
                             'id':       'Zebra_Form_error_message_' + id,
                             'css': {
                                 'opacity': 0
