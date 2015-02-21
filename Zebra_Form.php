@@ -1763,7 +1763,7 @@ class Zebra_Form
                 }
 
                 // switch the array entry with it's rendered form
-                $this->errors[$error_block] = '<div class="error"><div class="container">' . $content . '<div class="close"><a href="javascript:void(0)">close</a></div></div></div>';
+                $this->errors[$error_block] = '<div class="alert alert-danger" role="alert">' . $content . '</div>';
 
             }
 
